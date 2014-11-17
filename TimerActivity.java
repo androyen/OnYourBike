@@ -18,6 +18,9 @@ public class TimerActivity extends ActionBarActivity {
     protected Button stop;
     protected boolean timerRunning;
 
+    protected long startedAt;
+    protected long lastStopped;
+
     private static String TAG = TimerActivity.class.getSimpleName();
 
     @Override
@@ -40,18 +43,59 @@ public class TimerActivity extends ActionBarActivity {
         Log.d(TAG, "Clicked start button");
         timerRunning = true;
         enableButtons();
+
+        startedAt = System.currentTimeMillis(); //Set current time
+        setTimeDisplay();
     }
 
     public void clickedStop(View view) {
         Log.d(TAG, "Clicked stop button");
         timerRunning = false;
         enableButtons();
+
+        lastStopped = System.currentTimeMillis(); //Set current time
+        setTimeDisplay();
     }
 
     protected void enableButtons() {
         Log.d(TAG, "Set buttons enabled/disabled");
         start.setEnabled(!timerRunning);
         stop.setEnabled(timerRunning);
+    }
+
+    protected void setTimeDisplay() {
+        String display;
+        long timeNow;
+        long diff;
+        long seconds;
+        long minutes;
+        long hours;
+
+        Log.d(TAG, "Setting time display");
+
+        if (timerRunning) {
+            timeNow = System.currentTimeMillis();
+
+        }
+        else {
+            timeNow = lastStopped;
+        }
+
+        diff = timeNow - lastStopped;
+
+        //no negative time
+        if (diff < 0) {
+            diff = 0;
+        }
+
+        seconds = (diff / 1000);
+        minutes = (seconds / 60);
+        hours = (minutes / 60);
+        seconds = (seconds % 60);
+        minutes = (minutes % 60);
+
+        display = String.format("%d", hours) + ":" + String.format("%02d", minutes) + ":" + String.format("%02d", seconds);
+        counter.setText(display);
     }
 
     @Override
